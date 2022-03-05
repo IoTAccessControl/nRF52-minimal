@@ -7,6 +7,9 @@
 #define SHELL_MAX_ARGS 16
 #define SHELL_PROMPT "$ "
 
+struct ShellCommand __shell_cmd_sec_start__;
+struct ShellCommand __shell_cmd_sec_end__;
+
 static struct ShellContext {
     int (*send_char)(char c);
     int rx_size;
@@ -131,12 +134,12 @@ void shell_receive_char(char c) {
 }
 
 int shell_help_handler(int argc, char *argv[]){
-     for (int i = 0; i < g_num_shell_commands; i++) {
-        const ShellCommand * command = &g_shell_commands[i];
-        prv_echo_str(command->command);
-        prv_echo_str(": ");
-        prv_echo_str(command->help);
-        prv_echo('\n');
-     }
+     // for (int i = 0; i < g_num_shell_commands; i++) {
+     //    const ShellCommand * command = &g_shell_commands[i];
+     //    prv_echo_str(command->command);
+     //    prv_echo_str(": ");
+     //    prv_echo_str(command->help);
+     //    prv_echo('\n');
+     // }
      return 0;
 }

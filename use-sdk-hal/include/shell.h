@@ -6,8 +6,8 @@ struct ShellCommand;
 #define SHELL_CMD(name, handler, help) struct ShellCommand shell_cmd_##name \
     __attribute__((section("shell_cmd_sec"))) = {#name, handler, help};
 
-struct ShellCommand __shell_cmd_sec_start__;
-struct ShellCommand __shell_cmd_sec_end__;
+// struct ShellCommand __shell_cmd_sec_start__;
+// struct ShellCommand __shell_cmd_sec_end__;
 
 typedef struct ShellCommand {
     const char *command;

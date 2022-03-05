@@ -1,6 +1,10 @@
+//! @file
+//!
+//! A pure C-based Reset Handler and Vector Table for Cortex-M devices
+
 #include <stdint.h>
 
-extern void main();
+extern int main(void);
 
 // Following symbols are defined by the linker.
 // Start address for the initialization values of the .data section.
@@ -55,8 +59,8 @@ static void HardFault_Handler(void) {
   DefaultIntHandler();
 }
 
-extern void DebugMon_Handler(void);
-extern void Irq2_Handler(void);
+void DebugMon_Handler(void);
+void Irq2_Handler(void);
 
 #define EXTERNAL_INT_BASE 16 // NVIC Interrupt 0 starts here
 // A minimal vector table for a Cortex M.
