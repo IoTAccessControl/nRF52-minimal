@@ -8,6 +8,5 @@
 #define __enable_irq() __asm("cpsie i" : : : "memory")
 #define __disable_irq() __asm("cpsid i" : : : "memory")
 #define __IM volatile const
-#define __IO volatile
 #define __OM volatile
 #define __IOM volatile

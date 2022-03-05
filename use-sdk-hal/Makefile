@@ -2,7 +2,8 @@ PROJECT_NAME     := uart_pca10056
 TARGETS          := nrf52840_xxaa
 OUTPUT_DIRECTORY := _build
 
-SDK_ROOT := F:/IoT/Tools/nRF5SDK/nRF5_SDK_17.0.0_9d13099
+# SDK_ROOT := F:/IoT/Tools/nRF5SDK/nRF5_SDK_17.0.0_9d13099
+SDK_ROOT := /Users/fripside/Tools/IoT-SDK/Nrf52840/nRF5_SDK_17.1.0_ddde560
 PROJ_DIR := ..
 
 GDB_EXE = "arm-none-eabi-gdb-py"
