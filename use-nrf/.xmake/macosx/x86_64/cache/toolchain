@@ -1,0 +1,38 @@
+{
+    ["tool_target_nrfx-app_cross_cortex-m4_cc"] = {
+        toolchain_info = {
+            plat = "cross",
+            name = "arm-gcc",
+            cachekey = "arm-gcc_arch_cortex-m4_plat_cross",
+            arch = "cortex-m4"
+        },
+        toolname = "gcc",
+        program = "/Applications/ARM/bin/arm-none-eabi-gcc"
+    },
+    xcode_arch_x86_64_plat_macosx = {
+        target_minver = "12.0",
+        plat = "macosx",
+        xcode_sdkver = "12.1",
+        xcode_sysroot = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk",
+        __global = true,
+        arch = "x86_64",
+        xcode = "/Applications/Xcode.app"
+    },
+    ["arm-gcc_arch_cortex-m4_plat_cross"] = {
+        sdkdir = "/Applications/ARM/",
+        plat = "cross",
+        cross = "arm-none-eabi-",
+        arch = "cortex-m4",
+        bindir = "/Applications/ARM/bin"
+    },
+    ["tool_target_nrfx-app_cross_cortex-m4_ld"] = {
+        toolchain_info = {
+            plat = "cross",
+            name = "arm-gcc",
+            cachekey = "arm-gcc_arch_cortex-m4_plat_cross",
+            arch = "cortex-m4"
+        },
+        toolname = "gcc",
+        program = "/Applications/ARM/bin/arm-none-eabi-gcc"
+    }
+}
