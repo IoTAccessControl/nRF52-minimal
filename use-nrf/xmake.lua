@@ -1,4 +1,4 @@
--- includes("proj.lua")
+includes("proj.lua")
 
 set_project("nrf-demo")
 
@@ -38,6 +38,20 @@ toolchain_end()
 
 set_toolchains("arm-gcc")
 
+rule("gen-hex")
+	after_build(function (target)
+		print("after_build")
+		local out = target:targetfile() or ""
+		local bin_out = " build/"..target:name()..".hex"
+		print(string.format("%s => %s", out, bin_out))
+		-- os.exec("arm-none-eabi-objcopy -Obinary "..out.." "..bin_out)
+		os.exec("arm-none-eabi-objcopy -O ihex "..out.." "..bin_out)	
+		-- os.exec("nrfjprog -f nrf52 --program "..bin_out.." --sectorerase")
+		-- os.exec("nrfjprog -f nrf52 --reset")
+		-- os.exec("qemu-system-arm -M stm32-p103 -nographic -kernel"..bin_out)
+	end)
+rule_end()
+
 local cmisis = "/Users/fripside/Tools/IoT-SDK/Nrf52840/nRF5_SDK_17.1.0_ddde560/components/toolchain/cmsis/include"
 local nrfx = "/Users/fripside/Dev/Research/Compartment/nrf52840/nrf52480-baremetal/nrfx"
 
@@ -57,18 +71,9 @@ target("nrfx-app")
 	add_files(nrfx.."/drivers/src/*.c")
 	-- add_files("src/startup_nrf52840.s")
 	-- add_files({"src/*.c"})
+	add_rules("gen-hex")
 	add_files(files)
-	after_build(function (target)
-        print("after_build")
-	    local out = target:targetfile() or ""
-        local bin_out = " build/"..target:name()..".hex"
-        print(string.format("%s => %s", out, bin_out))
-        -- os.exec("arm-none-eabi-objcopy -Obinary "..out.." "..bin_out)
-		os.exec("arm-none-eabi-objcopy -O ihex "..out.." "..bin_out)	
-		-- os.exec("nrfjprog -f nrf52 --program "..bin_out.." --sectorerase")
-		-- os.exec("nrfjprog -f nrf52 --reset")
-        -- os.exec("qemu-system-arm -M stm32-p103 -nographic -kernel"..bin_out)
-    end)
+target_end()
 
 
 task("flash")
@@ -78,17 +83,16 @@ task("flash")
     on_run(function ()
 		os.exec("nrfjprog -f nrf52 --program build/nrfx-app.hex --sectorerase")
 		os.exec("nrfjprog -f nrf52 --reset")
-        -- print 'hello xmake!'
     end)
 
-    -- set the menu options, but we put empty options now.
     set_menu {
                 -- usage
                 usage = "xmake hello [options]"
 
                 -- description
-            ,   description = "Hello xmake!"
+            ,   description = "Flash the hex file to nrf52840!"
 
                 -- options
             ,   options = {}
             }
+task_end()
