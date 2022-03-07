@@ -1,9 +1,5 @@
 
-local includes = {
-
-}
-
-local files = {
+files = {
 	"src/*.c",
 	"src/startup_nrf52840.s",
 }

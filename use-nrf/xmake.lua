@@ -73,8 +73,18 @@ target("nrfx-app")
 	-- add_files({"src/*.c"})
 	add_rules("gen-hex")
 	add_files(files)
+	after_build(function (target)
+        print("after_build")
+	    local out = target:targetfile() or ""
+        local bin_out = " build/"..target:name()..".hex"
+        print(string.format("%s => %s", out, bin_out))
+        -- os.exec("arm-none-eabi-objcopy -Obinary "..out.." "..bin_out)
+		os.exec("arm-none-eabi-objcopy -O ihex "..out.." "..bin_out)	
+		-- os.exec("nrfjprog -f nrf52 --program "..bin_out.." --sectorerase")
+		-- os.exec("nrfjprog -f nrf52 --reset")
+        -- os.exec("qemu-system-arm -M stm32-p103 -nographic -kernel"..bin_out)
+    end)
 target_end()
-
 
 task("flash")
     -- set the category for showing it in plugin category menu (optional)
@@ -85,13 +95,13 @@ task("flash")
 		os.exec("nrfjprog -f nrf52 --reset")
     end)
 
+    -- set the menu options, but we put empty options now.
     set_menu {
                 -- usage
                 usage = "xmake hello [options]"
 
                 -- description
             ,   description = "Flash the hex file to nrf52840!"
-
                 -- options
             ,   options = {}
             }
