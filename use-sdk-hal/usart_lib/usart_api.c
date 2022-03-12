@@ -14,14 +14,13 @@
 #define UART_HWFC APP_UART_FLOW_CONTROL_DISABLED
 
 static int usart_init_impl();
+// static char usart_getchar();
 
 usart_api_t usart_expose_api = {
 	.usart_init = usart_init_impl,
 	.usart_putchar = app_uart_put,
 	.usart_getchar = app_uart_get
 };
-
-
 
 // Required for nrf52 uart setup
 static void uart_error_handle(app_uart_evt_t * p_event) {}

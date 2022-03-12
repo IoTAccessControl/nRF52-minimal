@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 #include "shell.h"
 #include "secure_channel.h"
 
@@ -12,7 +11,7 @@
 	secure_putc(ch);
 }
 
-inline char console_getc() {
+char console_getc() {
 	return secure_getc();
 }
 
@@ -74,24 +73,6 @@ int main(void) {
 
 	char c;
 	while (true) {
-		// console_puts("$ ");
-		// len = console_gets(buf, 128);
-		// console_putc('\n');
-		// console_put_line("=====Recv");
-		// snprintf(log, sizeof(log), "Data: %s Len: %d", buf, len);
-		// console_put_line(log);
-		// console_put_line("=====End");
-		// console_put_line("");
-		// if (len) {
-		// 	if (0 == strncmp("help", buf, len)) {
-		// 	console_put_line("OK: ");
-		// 	} if (0 == strncmp("1", buf, len - 1)) {
-		// 	console_put_line("OK: 1");
-		// 	} 
-		// 	else {
-		// 	console_put_line("FAIL: unrecognized command");
-		// 	}
-		// }
 		c = console_getc();
 		shell_receive_char(c);
 		console_putc(c);

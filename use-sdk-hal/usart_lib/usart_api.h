@@ -1,10 +1,11 @@
 #ifndef USART_API_H_
 #define USART_API_H_
+#include <stdint.h>
 
 typedef struct usart_api {
 	int (*usart_init)();
-	int (*usart_putchar)();
-	char (*usart_getchar)();
+	uint32_t (*usart_putchar)(uint8_t ch);
+	uint32_t (*usart_getchar)(uint8_t *);
 } usart_api_t;
 
 extern usart_api_t usart_expose_api;

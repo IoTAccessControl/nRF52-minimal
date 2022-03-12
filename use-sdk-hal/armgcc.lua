@@ -40,7 +40,7 @@ rule("arm-gcc")
 		-- target:add("defines", "-DTEST")
 		-- force add ld flags, ldflags {force = true}
 		-- target:set("policy", "check.auto_map_flags", false)
-		-- target:set("policy", "check.auto_ignore_flags", false)
+		target:set("policy", "check.auto_ignore_flags", true)
 		target:add("cxflags", cflags)
 		target:add("asflags", cflags)
 		-- use gcc to link
@@ -62,24 +62,26 @@ rule("arm-gcc")
 				print(string.format(binutil.." %s => %s", out_fi, gen_fi))
 				os.exec(binutil.."objcopy -O ihex "..out_fi.." "..gen_fi..".hex")
 				os.execv(binutil.."objdump", {"-S", out_fi}, {stdout=gen_fi..".asm"})
-				os.exec(binutil.."objcopy -Obinary "..out_fi.." "..gen_fi..".bin")
-				os.exec(binutil.."objcopy -I binary -O ihex "..gen_fi..".bin "..gen_fi.."2.hex")
+				-- os.exec(binutil.."objcopy -Obinary "..out_fi.." "..gen_fi..".bin")
+				-- os.exec(binutil.."objcopy -I binary -O ihex "..gen_fi..".bin "..gen_fi.."2.hex")
 			end
 		end
 	end)
 
 	after_clean(function (target)
-		local gen_fi = path.join(target:targetdir(), target:name())
-		os.rm(gen_fi..".*")
+		local gen_fi = path.join("build", target:name())
+		print("want to clean: "..gen_fi)
+		os.rm(gen_fi.."*")
 	end)
 rule_end()
 
+-- directly linked now
 rule("link-app")
 	on_load(function (target)
 		local nrf_sdx_path = get_config("NRF_SDK")
 		local ld_dir = nrf_sdx_path.."/modules/nrfx/mdk"
 		-- print("------------------------")
 		-- print(ld_dir)
-		-- target:add("ldflags", "-L"..ld_dir.." -Tshell_app/uart_gcc_nrf52.ld", {force=true})
+		target:add("ldflags", "-L"..ld_dir.." -Tshell_app/uart_gcc_nrf52.ld", {force=true})
 	end)
 rule_end()

@@ -17,6 +17,6 @@ int secure_putc(char c) {
 
 char secure_getc(void) {
 	uint8_t cr = 0;
-	while (app_uart_get(&cr) != NRF_SUCCESS);
+	while (usart_expose_api.usart_getchar(&cr) != NRF_SUCCESS);
 	return (char)cr;
 }
