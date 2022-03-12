@@ -9,7 +9,7 @@ PROJ_DIR := ..
 GDB_EXE = "arm-none-eabi-gdb-py"
 
 $(OUTPUT_DIRECTORY)/nrf52840_xxaa.out: \
-  LINKER_SCRIPT  := uart_gcc_nrf52.ld
+  LINKER_SCRIPT  := src/uart_gcc_nrf52.ld
 
 # Source files common to all targets
 SRC_FILES += \
@@ -38,16 +38,16 @@ SRC_FILES += \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_uart.c \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_uarte.c \
   $(SDK_ROOT)/modules/nrfx/mdk/system_nrf52840.c \
-  main.c  \
-  shell.c \
-  shell_commands.c \
+  shell_app/main.c  \
+  shell_app/shell.c \
+  shell_app/shell_commands.c \
 
 # Include folders common to all targets
 INC_FOLDERS += \
   $(SDK_ROOT)/components \
   $(SDK_ROOT)/modules/nrfx/mdk \
   $(PROJ_DIR) \
-  include \
+  shell_app \
   $(SDK_ROOT)/components/libraries/fifo \
   $(SDK_ROOT)/components/libraries/strerror \
   $(SDK_ROOT)/components/toolchain/cmsis/include \

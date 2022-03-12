@@ -75,14 +75,14 @@ target("nrfx-app")
 	add_files(files)
 	after_build(function (target)
         print("after_build")
-	    local out = target:targetfile() or ""
-        local bin_out = " build/"..target:name()..".hex"
-        print(string.format("%s => %s", out, bin_out))
-        -- os.exec("arm-none-eabi-objcopy -Obinary "..out.." "..bin_out)
-		os.exec("arm-none-eabi-objcopy -O ihex "..out.." "..bin_out)	
-		-- os.exec("nrfjprog -f nrf52 --program "..bin_out.." --sectorerase")
-		-- os.exec("nrfjprog -f nrf52 --reset")
-        -- os.exec("qemu-system-arm -M stm32-p103 -nographic -kernel"..bin_out)
+	    local out_fi = target:targetfile()
+        local bin_out = path.join(target:targetdir(), target:name())
+		if out_fi then
+			print(string.format("%s => %s", out_fi, bin_out))
+			-- os.exec("arm-none-eabi-objcopy -Obinary "..out.." "..bin_out)
+			os.exec("arm-none-eabi-objcopy -O ihex "..out_fi.." "..bin_out..".hex")
+			
+		end
     end)
 target_end()
 
@@ -90,7 +90,7 @@ task("flash")
     -- set the category for showing it in plugin category menu (optional)
     set_category("plugin")
     -- the main entry of the plugin
-    on_run(function ()
+    on_run(function (target)
 		os.exec("nrfjprog -f nrf52 --program build/nrfx-app.hex --sectorerase")
 		os.exec("nrfjprog -f nrf52 --reset")
     end)
