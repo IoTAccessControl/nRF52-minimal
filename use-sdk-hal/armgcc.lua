@@ -1,7 +1,4 @@
 
--- arm-gcc installing path
-local tool_path = "/Applications/ARM/"
-
 local cflags = {
 	"-O3 -g3",
 	"-mcpu=cortex-m4",
@@ -62,8 +59,8 @@ rule("arm-gcc")
 				print(string.format(binutil.." %s => %s", out_fi, gen_fi))
 				os.exec(binutil.."objcopy -O ihex "..out_fi.." "..gen_fi..".hex")
 				os.execv(binutil.."objdump", {"-S", out_fi}, {stdout=gen_fi..".asm"})
-				-- os.exec(binutil.."objcopy -Obinary "..out_fi.." "..gen_fi..".bin")
-				-- os.exec(binutil.."objcopy -I binary -O ihex "..gen_fi..".bin "..gen_fi.."2.hex")
+				os.exec(binutil.."objcopy -Obinary "..out_fi.." "..gen_fi..".bin")
+				os.exec(binutil.."objcopy -I binary -O ihex "..gen_fi..".bin "..gen_fi.."2.hex")
 			end
 		end
 	end)

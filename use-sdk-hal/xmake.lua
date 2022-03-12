@@ -1,4 +1,3 @@
-
 includes("armgcc.lua")
 includes("nrf_files.lua")
 
