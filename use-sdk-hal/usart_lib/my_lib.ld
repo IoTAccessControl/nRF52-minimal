@@ -57,6 +57,14 @@ SECTIONS
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
     } > FLASH
 
+	.shell_cmd_sec :
+    {
+      . = ALIGN(4);
+      __shell_cmd_sec_start__ = .;
+      KEEP(*(shell_cmd_sec))
+      __shell_cmd_sec_end__ = .;
+    } > FLASH
+
     . = ALIGN(4);
     _etext = .;
     _sidata = .;
