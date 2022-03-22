@@ -24,7 +24,6 @@ nrf_include_files = {
 }
 
 nrf_src_files = {
-	"/modules/nrfx/mdk/gcc_startup_nrf52840.S",
 	"/components/libraries/log/src/nrf_log_frontend.c",
 	"/components/libraries/log/src/nrf_log_str_formatter.c",
 	"/components/boards/boards.c",
@@ -48,7 +47,6 @@ nrf_src_files = {
 	"/modules/nrfx/drivers/src/prs/nrfx_prs.c",
 	"/modules/nrfx/drivers/src/nrfx_uart.c",
 	"/modules/nrfx/drivers/src/nrfx_uarte.c",
-	"/modules/nrfx/mdk/system_nrf52840.c",
 }
 
 nrf_defines = {
@@ -58,4 +56,9 @@ nrf_defines = {
 	"FLOAT_ABI_HARD",
 	"NRF52840_XXAA",
 	"__HEAP_SIZE=8192"
+}
+
+mrf_startup = {
+	"/modules/nrfx/mdk/gcc_startup_nrf52840.S",
+	"/modules/nrfx/mdk/system_nrf52840.c",
 }

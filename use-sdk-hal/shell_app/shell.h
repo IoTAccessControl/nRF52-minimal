@@ -19,13 +19,13 @@ typedef struct ShellImpl {
     int (*send_char)(char c);
 } ShellImpl;
 
-extern const ShellCommand *const g_shell_commands;
-extern const int g_num_shell_commands;
+// extern const ShellCommand *const g_shell_commands;
+// extern const int g_num_shell_commands;
 
 void shell_boot(const ShellImpl *impl);
 
 void shell_receive_char(char c);
 
-int shell_help_handler(int argc, char *argv[]);
+// int shell_help_handler(int argc, char *argv[]);
 
 void shell_put_line(const char *str);

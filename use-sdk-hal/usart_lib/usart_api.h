@@ -2,12 +2,12 @@
 #define USART_API_H_
 #include <stdint.h>
 
-typedef struct usart_api {
+typedef struct usart_api_t {
 	int (*usart_init)();
 	uint32_t (*usart_putchar)(uint8_t ch);
 	uint32_t (*usart_getchar)(uint8_t *);
 } usart_api_t;
 
-extern usart_api_t usart_expose_api;
+// extern usart_api_t usart_expose_api;
 
 #endif

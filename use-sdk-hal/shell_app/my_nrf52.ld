@@ -7,8 +7,8 @@ ENTRY(Reset_Handler)
 
 MEMORY
 {
-  FLASH (rx) : ORIGIN = 0x0, LENGTH = 0x100000
-  RAM (rwx) :  ORIGIN = 0x20000000, LENGTH = 0x40000
+  FLASH (rx) : ORIGIN = 0x0, LENGTH = 0x04000
+  RAM (rwx) :  ORIGIN = 0x20000000, LENGTH = 0x3000
 }
 
 SECTIONS
@@ -46,6 +46,14 @@ SECTIONS
       __shell_cmd_sec_start__ = .;
       KEEP(*(shell_cmd_sec))
       __shell_cmd_sec_end__ = .;
+    } > FLASH
+
+    
+    .usart_expose_api_sec :
+    {
+        . = ALIGN(16);
+        __start_usart_expose_api = .;
+        KEEP(*(usart_expose_api_sec))
     } > FLASH
 
     .ARM.extab :
@@ -130,14 +138,16 @@ SECTIONS
     __StackLimit = __StackTop - SIZEOF(.stack_dummy);
     PROVIDE(__stack = __StackTop);
 
-    /* Check if data + heap + stack exceeds RAM limit */
-    ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
-    
-    /* Check if text sections + data exceeds FLASH limit */
-    DataInitFlashUsed = __bss_start__ - __data_start__;
-    CodeFlashUsed = __etext - ORIGIN(FLASH);
-    TotalFlashUsed = CodeFlashUsed + DataInitFlashUsed;
-    ASSERT(TotalFlashUsed <= LENGTH(FLASH), "region FLASH overflowed with .data and user data")
-    
+     .stack (NOLOAD):
+    {
+        . = ALIGN(8);
+        _sstack = .;
+        . = . + 0x2000;
+        . = ALIGN(8);
+        _estack = .;
+    } > RAM
+
+    . = ALIGN(4);
+    _end = . ;
 }
 

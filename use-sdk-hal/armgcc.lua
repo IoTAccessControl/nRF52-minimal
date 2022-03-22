@@ -2,7 +2,10 @@
 local cflags = {
 	"-O3 -g3",
 	"-mcpu=cortex-m4",
-	"-mthumb -mabi=aapcs",
+	"-mthumb", 
+	-- "-nostdlib", -- do not use NewLib
+	--  "-mabi=aapcs",
+	"-ffreestanding",
 	-- "-Wall -Werror",
 	"-mfloat-abi=hard -mfpu=fpv4-sp-d16",
 	-- keep every function in a separate section, this allows linker to discard unused ones
@@ -12,7 +15,7 @@ local cflags = {
 
 local ldflags = {
 	"-specs=nano.specs",
-	"-lc",
+	-- "-lc",
 	"-lm",
 	"-lnosys",
 	"-Wl,--gc-sections",
@@ -57,10 +60,11 @@ rule("arm-gcc")
 			local binutil = get_config("sdk").."/bin/arm-none-eabi-"
 			if out_fi then
 				print(string.format(binutil.." %s => %s", out_fi, gen_fi))
-				os.exec(binutil.."objcopy -O ihex "..out_fi.." "..gen_fi..".hex")
+				os.cp(out_fi, gen_fi..".elf")
+				-- os.exec(binutil.."objcopy -O ihex "..out_fi.." "..gen_fi..".hex")
 				os.execv(binutil.."objdump", {"-S", out_fi}, {stdout=gen_fi..".asm"})
-				os.exec(binutil.."objcopy -Obinary "..out_fi.." "..gen_fi..".bin")
-				os.exec(binutil.."objcopy -I binary -O ihex "..gen_fi..".bin "..gen_fi.."2.hex")
+				-- os.exec(binutil.."objcopy -Obinary "..out_fi.." "..gen_fi..".bin")
+				-- os.exec(binutil.."objcopy -I binary -O ihex "..gen_fi..".bin "..gen_fi.."2.hex")
 			end
 		end
 	end)
@@ -74,12 +78,111 @@ rule_end()
 
 -- directly linked now
 rule("link-app")
+	add_deps("arm-gcc")	
 	on_load(function (target)
-		local nrf_sdx_path = get_config("NRF_SDK")
-		local ld_dir = nrf_sdx_path.."/modules/nrfx/mdk"
+		-- local nrf_sdx_path = get_config("NRF_SDK")
+		-- local ld_dir = nrf_sdx_path.."/modules/nrfx/mdk"
 		-- print("------------------------")
 		-- print(ld_dir)
-		target:add("ldflags", "-L"..ld_dir.." -Tshell_app/uart_gcc_nrf52.ld", {force=true})
+		-- target:add("ldflags", "-L"..ld_dir.." -Tshell_app/uart_gcc_nrf52.ld", {force=true})
 		-- target:add("ldflags",  "-L"..ld_dir.." -Tshell_app/my_nrf52.ld", {force=true})
+	end)
+	
+	after_build(function (target)
+		print("Generate firmware")
+		local out_fi = target:targetfile()
+		local gen_fi = "build/"..target:name()
+		local binutil = get_config("sdk").."/bin/arm-none-eabi-"
+		if out_fi then
+			print(string.format(binutil.." %s => %s", out_fi, gen_fi))
+			os.cp(out_fi, gen_fi..".elf")
+			os.exec(binutil.."objcopy -O ihex "..out_fi.." "..gen_fi..".hex")
+			os.execv(binutil.."objdump", {"-S", out_fi}, {stdout=gen_fi..".asm"})
+			-- os.exec(binutil.."objcopy -Obinary "..out_fi.." "..gen_fi..".bin")
+			-- os.exec(binutil.."objcopy -I binary -O ihex "..gen_fi..".bin "..gen_fi.."2.hex")
+		end
+	end)
+rule_end()
+
+
+rule("link-all")
+	add_deps("arm-gcc")
+	after_build(function (target)
+		print("================================================")
+		print("Merge firmware")
+		local binutil = get_config("sdk").."/bin/arm-none-eabi-"
+
+		-- gen bin 1
+		local bin_main = "build/nrf-app.elf"
+		local gen_bin1 = "build/nrf-app.bin"
+		os.exec(binutil.."objcopy --pad-to=0x04000 --gap-fill=0xFF -Obinary "..bin_main.." "..gen_bin1)
+		print("generate: "..gen_bin1)
+		-- --pad-to=0x4000 --gap-fill=0xFF -O binary 
+		-- gen bin 2
+		local bin_nrf = "build/nrf-sdk-bin.elf"
+		local gen_bin2 = "build/nrf-sdk-bin.bin"
+		os.exec(binutil.."objcopy -Obinary "..bin_nrf.." "..gen_bin2)
+		print("generate: "..gen_bin2)
+
+		-- merge two bin
+		local merge_bin = "build/merge.bin"
+		-- os.execv("cmd /c cat", gen_bin2, {stdout=gen_bin1})
+		local file = io.open(merge_bin, "wb")
+		local bin1 = io.open(gen_bin1, "rb")
+		local bin2 = io.open(gen_bin2, "rb")
+		print("add "..gen_bin1)
+		-- file:write(io.readfile(gen_bin1, "rb"))
+		file:write(bin1:read("*a"))
+		file:write(bin2:read("*a"))
+		-- print("add "..gen_bin2)
+		-- file:write(io.readfile(gen_bin2, "rb"))
+		bin1:close()
+		bin2:close()
+		file:close()
+
+		-- gen hex
+		local merge_hex = "build/merge.hex"
+		os.exec(binutil.."objcopy -I binary -O ihex "..merge_bin.." "..merge_hex)
+	end)
+rule_end()
+
+rule("link-test-lib")
+	add_deps("arm-gcc")
+	after_build(function (target)
+		print("================================================")
+		print("Merge firmware")
+		local binutil = get_config("sdk").."/bin/arm-none-eabi-"
+
+		-- gen bin 1
+		local bin_main = "build/nrf-app.elf"
+		local gen_bin1 = "build/nrf-app.bin"
+		os.exec(binutil.."objcopy --pad-to=0x04000 --gap-fill=0xFF -Obinary "..bin_main.." "..gen_bin1)
+		print("generate: "..gen_bin1)
+		-- --pad-to=0x4000 --gap-fill=0xFF -O binary 
+		-- gen bin 2
+		local bin_nrf = "build/nrf-test-lib.elf"
+		local gen_bin2 = "build/nrf-test-lib.bin"
+		os.exec(binutil.."objcopy -Obinary "..bin_nrf.." "..gen_bin2)
+		print("generate: "..gen_bin2)
+
+		-- merge two bin
+		local merge_bin = "build/merge.bin"
+		-- os.execv("cmd /c cat", gen_bin2, {stdout=gen_bin1})
+		local file = io.open(merge_bin, "wb")
+		local bin1 = io.open(gen_bin1, "rb")
+		local bin2 = io.open(gen_bin2, "rb")
+		print("add "..gen_bin1)
+		-- file:write(io.readfile(gen_bin1, "rb"))
+		file:write(bin1:read("*a"))
+		file:write(bin2:read("*a"))
+		-- print("add "..gen_bin2)
+		-- file:write(io.readfile(gen_bin2, "rb"))
+		bin1:close()
+		bin2:close()
+		file:close()
+
+		-- gen hex
+		local merge_hex = "build/merge.hex"
+		os.exec(binutil.."objcopy -I binary -O ihex "..merge_bin.." "..merge_hex)
 	end)
 rule_end()

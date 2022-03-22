@@ -6,57 +6,25 @@
 
 #include "shell.h"
 #include "secure_channel.h"
+#include "usart_api.h"
 
- void console_putc(char ch) {
-	secure_putc(ch);
-}
+extern int _end;
 
-char console_getc() {
-	return secure_getc();
-}
+void* _sbrk(int incr) {
+	static unsigned char *heap = NULL;
+	unsigned char *prev_heap;
 
-void console_puts(char *s) {
-	while (*s != '\0') {
-		if (*s == '\r') {
-			console_putc('\n');
-		} else {
-			console_putc(*s);
-		}
-		s++;
+	if (heap == NULL) {
+		heap = (unsigned char *)&_end;
 	}
+	prev_heap = heap;
+
+	heap += incr;
+
+	return (void* ) prev_heap;
 }
 
-void console_put_line(char *s) {
-	console_puts(s);
-	console_puts("\n");
-}
-
-int console_gets(char *s, int len) {
-	char *t = s;
-	char c;
-
-	*t = '\000';
-	/* read until a <CR> is received */
-	while ((c = secure_getc()) != '\n') {
-	if ((c == '\010') || (c == '\127')) {
-		if (t > s) {
-		/* send ^H ^H to erase previous character */
-		console_puts("\010 \010");
-		t--;
-		}
-	} else {
-		*t = c;
-		console_putc(c);
-		if ((t - s) < len) {
-		t++;
-		}
-	}
-	/* update end of string with NUL */
-	*t = '\000';
-	}
-	return t - s;
-}
-
+#include "lib_test.h"
 
 int main(void) {
   // uint32_t err_code;
@@ -68,13 +36,15 @@ int main(void) {
 
 	init_secure_channel();
 
-	ShellImpl impl = {.send_char = console_putc};
+	ShellImpl impl = {.send_char = secure_putc};
 	shell_boot(&impl);
+
+	test_func_lib();
 
 	char c;
 	while (true) {
-		c = console_getc();
+		c = secure_getc();
 		shell_receive_char(c);
-		console_putc(c);
+		// secure_putc(c);
 	}
 }
