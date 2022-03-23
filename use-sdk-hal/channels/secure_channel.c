@@ -11,6 +11,7 @@ typedef struct usart_api_t {
 	int (*usart_init)();
 	uint32_t (*usart_putchar)(uint8_t ch);
 	uint32_t (*usart_getchar)(uint8_t *);
+	uint32_t (*usart_flush)(void);
 } usart_api_t;
 
 
@@ -62,6 +63,7 @@ static log_print_porting(const char *fmt, va_list *args) {
 			secure_putc(*c);
 		}
 	}
+	// get_usart_api()->usart_flush();
 }
 
 void debug_log(const char *fmt, ...) {

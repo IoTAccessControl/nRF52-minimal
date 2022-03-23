@@ -5,6 +5,7 @@ local cflags = {
 	"-mthumb", 
 	-- "-nostdlib", -- do not use NewLib
 	--  "-mabi=aapcs",
+	"-fstack-usage",
 	"-ffreestanding",
 	-- "-Wall -Werror",
 	"-mfloat-abi=hard -mfpu=fpv4-sp-d16",
@@ -18,6 +19,7 @@ local ldflags = {
 	-- "-lc",
 	"-lm",
 	"-lnosys",
+	"-Wl,--print-memory-usage",
 	"-Wl,--gc-sections",
 }
 
@@ -169,16 +171,16 @@ rule("link-test-lib")
 		local merge_bin = "build/merge.bin"
 		-- os.execv("cmd /c cat", gen_bin2, {stdout=gen_bin1})
 		local file = io.open(merge_bin, "wb")
-		local bin1 = io.open(gen_bin1, "rb")
-		local bin2 = io.open(gen_bin2, "rb")
+		-- local bin1 = io.open(gen_bin1, "rb")
+		-- local bin2 = io.open(gen_bin2, "rb")
 		print("add "..gen_bin1)
-		-- file:write(io.readfile(gen_bin1, "rb"))
-		file:write(bin1:read("*a"))
-		file:write(bin2:read("*a"))
-		-- print("add "..gen_bin2)
-		-- file:write(io.readfile(gen_bin2, "rb"))
-		bin1:close()
-		bin2:close()
+		file:write(io.readfile(gen_bin1, {encoding = "binary"}))
+		-- file:write(bin1:read("*a"))
+		-- file:write(bin2:read("*a"))
+		print("add "..gen_bin2)
+		file:write(io.readfile(gen_bin2, {encoding = "binary"}))
+		-- bin1:close()
+		-- bin2:close()
 		file:close()
 
 		-- gen hex

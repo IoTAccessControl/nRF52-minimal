@@ -16,9 +16,15 @@
 
 ```
 
+
+NewLib启动：
+https://github.com/bminor/newlib/blob/master/newlib/libc/sys/arm/crt0.S
+
+
+
 ### TODO 
  
-1. 用gdb刷机调试  
+1. 用gdb刷机调试 (装gef插件)  
 
 2. 接入报错库  
 输出hardware_fualt错误细节。  

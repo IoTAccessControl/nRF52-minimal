@@ -3,11 +3,7 @@ OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 SEARCH_DIR(.)
 GROUP(-lgcc -lc -lnosys)
 
-MEMORY
-{
-  FLASH (rx) : ORIGIN = 0x04000, LENGTH = 0x08000
-  RAM (rwx) :  ORIGIN = 0x20003000, LENGTH = 0x20000
-}
+INCLUDE memory.ld
 
 SECTIONS
 {
@@ -31,17 +27,17 @@ SECTIONS
 
         *(.rodata*)
 
-        KEEP(*(.eh_frame*))
-    } > FLASH
+    } > test_lib_flash
 
-    .lib_func_test 0x5000:
+    . = ALIGN(16);
+    .lib_func_test ABSOLUTE(test_lib_hal_flash_addr):
     {
         . = ALIGN(16);
         KEEP(*(lib_func_test))
-    } > FLASH
+    } > test_lib_flash
 
     . = ALIGN(4);
-    __etext = 0x5100;
+    __etext = test_lib_data_flash_addr;
 
     .data : AT (__etext)
     {
@@ -75,7 +71,7 @@ SECTIONS
         /* All data end */
         __data_end__ = .;
 
-    } > RAM
+    } > test_app_ram
 
     .bss :
     {
@@ -85,6 +81,6 @@ SECTIONS
         *(COMMON)
         . = ALIGN(4);
         __bss_end__ = .;
-    } > RAM
+    } > test_app_ram
 }
 

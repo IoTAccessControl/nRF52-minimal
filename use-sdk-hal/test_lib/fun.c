@@ -16,5 +16,5 @@ static int test_func1(int op1, int op2) {
 }
 
 static int test_func2(int op1) {
-	return op1 + g_value[op1 % 5];
+	return g_value[op1 % 5];
 }

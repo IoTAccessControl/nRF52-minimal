@@ -40,6 +40,10 @@ int main(void) {
 	shell_boot(&impl);
 
 	test_func_lib();
+	// uint32_t ptr = 0x20002000;
+	// for (int i = 0; i < 10; i++) {
+	// 	debug_log("add: 0x%08x\n", ptr + i * 4);
+	// }
 
 	char c;
 	while (true) {

@@ -8,8 +8,8 @@
 
 #include "usart_api.h"
 
-#define UART_TX_BUF_SIZE 256                         /**< UART TX buffer size. */
-#define UART_RX_BUF_SIZE 256                         /**< UART RX buffer size. */
+#define UART_TX_BUF_SIZE 1024                         /**< UART TX buffer size. */
+#define UART_RX_BUF_SIZE 128                         /**< UART RX buffer size. */
 
 #define UART_HWFC APP_UART_FLOW_CONTROL_DISABLED
 
@@ -19,7 +19,8 @@ static int usart_init_impl();
 usart_api_t usart_expose_api __attribute__((section("usart_expose_api_sec"))) = {
 	.usart_init = usart_init_impl,
 	.usart_putchar = app_uart_put,
-	.usart_getchar = app_uart_get
+	.usart_getchar = app_uart_get,
+	.usart_flush = app_uart_flush
 };
 
 // __attribute__((__used__)) usart_api_t* get_usart_api() {
@@ -46,7 +47,9 @@ __attribute__((noinline)) static void copy_stack(void) {
 }
 
 // Required for nrf52 uart setup
-static void uart_error_handle(app_uart_evt_t * p_event) {}
+static void uart_error_handle(app_uart_evt_t * p_event) {
+
+}
 
 static int usart_init_impl() {
 	uint32_t err_code;
